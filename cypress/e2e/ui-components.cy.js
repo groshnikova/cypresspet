@@ -208,7 +208,7 @@ it("Filtering the table", () => {
   });
 });
 
-it.only("Filtering the table2", () => {
+it("Filtering the table2", () => {
   cy.contains("Tables & Data").click();
   cy.contains("Smart Table").click();
 
@@ -225,3 +225,78 @@ it.only("Filtering the table2", () => {
     });
   });
 });
+
+it("Datepicker", () => {
+  cy.contains("Forms").click();
+  cy.contains("Datepicker").click();
+
+  function selectDateFromCurrentDay(day) {
+    let date = new Date(); //java script object
+    date.setDate(date.getDate() + day);
+    let futureDay = date.getDate();
+    let futureMonthLong = date.toLocaleDateString("en-US", { month: "long" });
+    let futureMonthShort = date.toLocaleDateString("en-US", { month: "short" });
+    let futureYear = date.getFullYear();
+    let dateToAssert = `${futureMonthShort} ${futureDay}, ${futureYear}`;
+    cy.get("nb-calendar-view-mode")
+      .invoke("text")
+      .then((calendarMonthAndYear) => {
+        if (
+          !calendarMonthAndYear.includes(futureMonthLong) ||
+          !calendarMonthAndYear.includes(futureYear)
+        ) {
+          cy.get('[data-name="chevron-right"]').click();
+          selectDateFromCurrentDay(day);
+        } else {
+          cy.get(".day-cell")
+            .not(".bounding-month")
+            .contains(futureDay)
+            .click();
+        }
+      })
+      return dateToAssert;
+  }
+
+  //boundary month dates can be a problem sometimes, so we have to manage it with coding
+  cy.get('[placeholder="Form Picker"]').then((input) => {
+    cy.wrap(input).click();
+    const dateToAssert = selectDateFromCurrentDay(200);
+    cy.wrap(input).should("have.value", dateToAssert);
+  });
+});
+
+it('Slicers', () => {
+  cy.get('[tabtitle="Temperature"] circle')
+  .invoke('attr', 'cx', '116.12')
+  .invoke('attr', 'cy', '11.19')
+  .click()
+
+  cy.get('[class="value temperature h1"]').should('contain.text', "20")
+})
+
+it('Drag and Drop', () => {
+  cy.contains('Extra Components').click()
+  cy.contains('Drag & Drop').click()
+
+  cy.get('#todo-list div').first().trigger('dragstart')
+  cy.get('#drop-list').trigger('drop')
+})
+
+it('iframes', () => {
+  cy.contains('Modal & Overlays').click()
+  cy.contains('Dialog').click()
+
+  cy.frameLoaded('[data-cy="esc-close-iframe"]')
+
+  cy.iframe('[data-cy="esc-close-iframe"]').contains('Open Dialog with esc close').click()
+
+  cy.contains('Dismiss Dialog').click()
+
+  //Option 2
+  cy.enter('[data-cy="esc-close-iframe"]').then(getBody => {
+    getBody().contains('Open Dialog with esc close').click()
+    cy.contains('Dismiss Dialog').click()
+    getBody().contains('Open Dialog without esc close').click()
+    cy.contains('OK').click()
+  })
+})

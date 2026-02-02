@@ -63,7 +63,7 @@ it('Check boxes', () => {
 })
 
 
-it.only('Lists and Dropdowns', () => {
+it('Lists and Dropdowns', () => {
     //two types of Dropdowns: Native: list - options Custom: button - ul- option list
     cy.contains('Modal & Overlays').click()
     cy.contains('Toastr').click()
@@ -78,11 +78,80 @@ it.only('Lists and Dropdowns', () => {
     cy.contains('div', 'Position:').find('nb-select').should('have.text', 'bottom-right')
 
     //Loop for selecting all values and checking if they work for Native
-    cy.contains('div', "Toast type:").find('select').then(dropdown => {
+    cy.contains('div', "Position:").find('nb-select').then(dropdown => {
         cy.wrap(dropdown).click()
-        cy.get('.option-list nb-option').each(opt => {
-            cy.wrap(option).click()
+        cy.get('.option-list nb-option').each((opt, index, list) => {
+            cy.wrap(opt).click()
+            if(index < list.length-1)
+            cy.wrap(dropdown).click()
+
         })
     })
 
+})
+
+it('Tooltips automation', () => {
+    //Going to the location of the element that we are testing 
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Tooltip').click()
+
+    cy.contains('button', 'Top').trigger('mouseenter')
+    cy.get('nb-tooltip').should('have.text', 'This is a tooltip')
+})
+
+it('Dialog boxes Native to the application and Native to the browser', () => {
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Dialog').click()
+
+    //Native to the application
+    cy.contains('button', 'Enter Name').click()
+    cy.get('input[placeholder="Name"]').type('Karina',{delay: 200})
+    cy.contains('button', 'Submit').click()
+
+})
+
+it('Dialog boxes Native to the application and Native to the browser2', () => {
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+    cy.get('.nb-trash').first().click()
+
+    //Option 1(only when triggered)
+    cy.on('window:confirm', confirm => {
+        expect(confirm).to.equal('Are you sure you want to delete?' )
+    })
+
+    //Option 2 
+    cy.window().then(win => {
+        cy.stub(win, 'confirm').as('dialogBox').returns(true)//false if you don't want to delete
+    })
+    cy.get('.nb-trash').first().click()
+    cy.get('@dialogBox').should('be.calledWith', 'Are you sure you want to delete?')
+
+})
+
+it.only('WebTables', () => {
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+    //option 1: by text
+    cy.get('tbody').contains('tr', 'Larry').then(tableRow => {
+        cy.wrap(tableRow).find('.nb-edit').click()
+        cy.wrap(tableRow).find('[placeholder="Age"]').clear().type('35')
+        cy.wrap(tableRow).find('.nb-checkmark').click()
+        cy.wrap(tableRow).find('td').last().should('have.text', '35')
+    })
+
+    //option 2: by index
+    cy.get('.nb-plus').click()
+    cy.get('thead tr').eq(2).then(tableRow => {
+        cy.wrap(tableRow).find('[placeholder="First Name"]').type('Karina')
+        cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Groshnikova')
+        cy.wrap(tableRow).find('[placeholder="Username"]').type('@groshni')
+        cy.wrap(tableRow).find('[placeholder="E-mail"]').type('test@gmail.com')
+        cy.wrap(tableRow).find('[placeholder="Age"]').type('28')
+        cy.wrap(tableRow).find('.nb-checkmark').click()
+    })
+    cy.get('tbody tr').first().find('td').then(tableColumns => {
+        cy.wrap(tableColumns).eq(2).should('have.text', 'Karina')
+        cy.wrap(tableColumns).eq(3).should('have.text', 'Groshnikova')
+    })
 })

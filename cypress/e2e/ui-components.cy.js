@@ -1,157 +1,227 @@
 /// <reference types="cypress" />
 
-beforeEach('Open application', () => {
-    cy.visit('/')
+beforeEach("Open application", () => {
+  cy.visit("/");
 });
 
-it('input fields', () => {
-    cy.contains('Forms').click()
-    cy.contains('Form Layouts').click()
+it("input fields", () => {
+  cy.contains("Forms").click();
+  cy.contains("Form Layouts").click();
 
-    //regular typing
-    cy.get('#exampleInputEmail1').type('karina.groshnikova@gmail.com')
+  //regular typing
+  cy.get("#exampleInputEmail1").type("karina.groshnikova@gmail.com");
 
-    //typing with delay
-    cy.get('#inputEmail1').type('test@gmail.com', {delay: 200}).clear().type('hello').clear()
+  //typing with delay
+  cy.get("#inputEmail1")
+    .type("test@gmail.com", { delay: 200 })
+    .clear()
+    .type("hello")
+    .clear();
 
-    //to clear an input field
+  //to clear an input field
 
-    //typing into input using the label(clear doesn't work when using the label)
-    cy.contains('nb-card', 'Using the Grid').contains('Email').type('helloworld')
+  //typing into input using the label(clear doesn't work when using the label)
+  cy.contains("nb-card", "Using the Grid").contains("Email").type("helloworld");
 
-    cy.get('#inputEmail1').should('have.value', 'helloworld').clear().type('new value').press(Cypress.Keyboard.TAB)
-
-
+  cy.get("#inputEmail1")
+    .should("have.value", "helloworld")
+    .clear()
+    .type("new value")
+    .press(Cypress.Keyboard.TAB);
 });
 
-it('Tap keys for inputs', () => {
-    cy.contains('Auth').click()
-    cy.contains('Login').click()
+it("Tap keys for inputs", () => {
+  cy.contains("Auth").click();
+  cy.contains("Login").click();
 
-    cy.get('#input-email').type('test@bondaracademy.com')
-    cy.get('#input-password').type('Welcome{enter}')
+  cy.get("#input-email").type("test@bondaracademy.com");
+  cy.get("#input-password").type("Welcome{enter}");
 });
 
-it('Radio buttons', () => {
-    cy.contains('Forms').click()
-    cy.contains('Form Layouts').click()
-    cy.contains('nb-card', 'Using the Grid').find('[type="radio"]').then(allRadioButtons => {
-        cy.wrap(allRadioButtons).eq(0).check({force:true}).should('be.checked')
-        cy.wrap(allRadioButtons).eq(1).check({force:true}).should('be.checked')
-        cy.wrap(allRadioButtons).eq(0).should('not.be.checked')
-        cy.wrap(allRadioButtons).eq(2).should('be.disabled')
-    })
+it("Radio buttons", () => {
+  cy.contains("Forms").click();
+  cy.contains("Form Layouts").click();
+  cy.contains("nb-card", "Using the Grid")
+    .find('[type="radio"]')
+    .then((allRadioButtons) => {
+      cy.wrap(allRadioButtons)
+        .eq(0)
+        .check({ force: true })
+        .should("be.checked");
+      cy.wrap(allRadioButtons)
+        .eq(1)
+        .check({ force: true })
+        .should("be.checked");
+      cy.wrap(allRadioButtons).eq(0).should("not.be.checked");
+      cy.wrap(allRadioButtons).eq(2).should("be.disabled");
+    });
 
-    cy.contains('nb-card', 'Using the Grid').contains('Option 1').click({force:true})
-    cy.contains('nb-card', 'Using the Grid').contains('Option 2').click({force:true})
+  cy.contains("nb-card", "Using the Grid")
+    .contains("Option 1")
+    .click({ force: true });
+  cy.contains("nb-card", "Using the Grid")
+    .contains("Option 2")
+    .click({ force: true });
 
-    cy.contains('nb-card', 'Using the Grid').contains('label', 'Option 1').find('input').check({force:true})
-    cy.contains('nb-card', 'Using the Grid').contains('label', 'Option 2').find('input').check({force:true})
-    cy.contains('nb-card', 'Using the Grid').contains('label', 'Disabled Option').find('input[type="radio"]').should('not.be.checked')
-})
+  cy.contains("nb-card", "Using the Grid")
+    .contains("label", "Option 1")
+    .find("input")
+    .check({ force: true });
+  cy.contains("nb-card", "Using the Grid")
+    .contains("label", "Option 2")
+    .find("input")
+    .check({ force: true });
+  cy.contains("nb-card", "Using the Grid")
+    .contains("label", "Disabled Option")
+    .find('input[type="radio"]')
+    .should("not.be.checked");
+});
 
-it('Check boxes', () => {
-    cy.contains('Modal & Overlays').click()
-    cy.contains('Toastr').click()
+it("Check boxes", () => {
+  cy.contains("Modal & Overlays").click();
+  cy.contains("Toastr").click();
 
-    // State of the checkbox is always gonna be checked compared to the click command
-    cy.get('[type="checkbox"]').uncheck({force:true})
+  // State of the checkbox is always gonna be checked compared to the click command
+  cy.get('[type="checkbox"]').uncheck({ force: true });
 
-    cy.get('[type="checkbox"]').click({force:true, multiple: true})
+  cy.get('[type="checkbox"]').click({ force: true, multiple: true });
 
-    cy.contains('label', 'Hide on click').find('input').uncheck({force:true}).should('not.be.checked')
-})
+  cy.contains("label", "Hide on click")
+    .find("input")
+    .uncheck({ force: true })
+    .should("not.be.checked");
+});
 
+it("Lists and Dropdowns", () => {
+  //two types of Dropdowns: Native: list - options Custom: button - ul- option list
+  cy.contains("Modal & Overlays").click();
+  cy.contains("Toastr").click();
 
-it('Lists and Dropdowns', () => {
-    //two types of Dropdowns: Native: list - options Custom: button - ul- option list
-    cy.contains('Modal & Overlays').click()
-    cy.contains('Toastr').click()
+  //Native
+  cy.contains("div", "Toast type:").find("select").select("info");
+  cy.contains("div", "Toast type:")
+    .find("select")
+    .select("warning")
+    .should("have.value", "warning");
 
-    //Native
-    cy.contains('div', 'Toast type:').find('select').select('info')
-    cy.contains('div', 'Toast type:').find('select').select('warning').should('have.value', 'warning')
+  //Custom
+  cy.contains("div", "Position:").find("nb-select").click();
+  cy.get(".option-list").contains("bottom-right").click();
+  cy.contains("div", "Position:")
+    .find("nb-select")
+    .should("have.text", "bottom-right");
 
-    //Custom
-    cy.contains('div', 'Position:').find('nb-select').click()
-    cy.get('.option-list').contains('bottom-right').click()
-    cy.contains('div', 'Position:').find('nb-select').should('have.text', 'bottom-right')
+  //Loop for selecting all values and checking if they work for Native
+  cy.contains("div", "Position:")
+    .find("nb-select")
+    .then((dropdown) => {
+      cy.wrap(dropdown).click();
+      cy.get(".option-list nb-option").each((opt, index, list) => {
+        cy.wrap(opt).click();
+        if (index < list.length - 1) cy.wrap(dropdown).click();
+      });
+    });
+});
 
-    //Loop for selecting all values and checking if they work for Native
-    cy.contains('div', "Position:").find('nb-select').then(dropdown => {
-        cy.wrap(dropdown).click()
-        cy.get('.option-list nb-option').each((opt, index, list) => {
-            cy.wrap(opt).click()
-            if(index < list.length-1)
-            cy.wrap(dropdown).click()
+it("Tooltips automation", () => {
+  //Going to the location of the element that we are testing
+  cy.contains("Modal & Overlays").click();
+  cy.contains("Tooltip").click();
 
-        })
-    })
+  cy.contains("button", "Top").trigger("mouseenter");
+  cy.get("nb-tooltip").should("have.text", "This is a tooltip");
+});
 
-})
+it("Dialog boxes Native to the application and Native to the browser", () => {
+  cy.contains("Modal & Overlays").click();
+  cy.contains("Dialog").click();
 
-it('Tooltips automation', () => {
-    //Going to the location of the element that we are testing 
-    cy.contains('Modal & Overlays').click()
-    cy.contains('Tooltip').click()
+  //Native to the application
+  cy.contains("button", "Enter Name").click();
+  cy.get('input[placeholder="Name"]').type("Karina", { delay: 200 });
+  cy.contains("button", "Submit").click();
+});
 
-    cy.contains('button', 'Top').trigger('mouseenter')
-    cy.get('nb-tooltip').should('have.text', 'This is a tooltip')
-})
+it("Dialog boxes Native to the application and Native to the browser2", () => {
+  cy.contains("Tables & Data").click();
+  cy.contains("Smart Table").click();
+  cy.get(".nb-trash").first().click();
 
-it('Dialog boxes Native to the application and Native to the browser', () => {
-    cy.contains('Modal & Overlays').click()
-    cy.contains('Dialog').click()
+  //Option 1(only when triggered)
+  cy.on("window:confirm", (confirm) => {
+    expect(confirm).to.equal("Are you sure you want to delete?");
+  });
 
-    //Native to the application
-    cy.contains('button', 'Enter Name').click()
-    cy.get('input[placeholder="Name"]').type('Karina',{delay: 200})
-    cy.contains('button', 'Submit').click()
+  //Option 2
+  cy.window().then((win) => {
+    cy.stub(win, "confirm").as("dialogBox").returns(true); //false if you don't want to delete
+  });
+  cy.get(".nb-trash").first().click();
+  cy.get("@dialogBox").should(
+    "be.calledWith",
+    "Are you sure you want to delete?",
+  );
+});
 
-})
+it("WebTables", () => {
+  cy.contains("Tables & Data").click();
+  cy.contains("Smart Table").click();
+  //option 1: by text
+  cy.get("tbody")
+    .contains("tr", "Larry")
+    .then((tableRow) => {
+      cy.wrap(tableRow).find(".nb-edit").click();
+      cy.wrap(tableRow).find('[placeholder="Age"]').clear().type("35");
+      cy.wrap(tableRow).find(".nb-checkmark").click();
+      cy.wrap(tableRow).find("td").last().should("have.text", "35");
+    });
 
-it('Dialog boxes Native to the application and Native to the browser2', () => {
-    cy.contains('Tables & Data').click()
-    cy.contains('Smart Table').click()
-    cy.get('.nb-trash').first().click()
+  //option 2: by index
+  cy.get(".nb-plus").click();
+  cy.get("thead tr")
+    .eq(2)
+    .then((tableRow) => {
+      cy.wrap(tableRow).find('[placeholder="First Name"]').type("Karina");
+      cy.wrap(tableRow).find('[placeholder="Last Name"]').type("Groshnikova");
+      cy.wrap(tableRow).find('[placeholder="Username"]').type("@groshni");
+      cy.wrap(tableRow).find('[placeholder="E-mail"]').type("test@gmail.com");
+      cy.wrap(tableRow).find('[placeholder="Age"]').type("28");
+      cy.wrap(tableRow).find(".nb-checkmark").click();
+    });
+  cy.get("tbody tr")
+    .first()
+    .find("td")
+    .then((tableColumns) => {
+      cy.wrap(tableColumns).eq(2).should("have.text", "Karina");
+      cy.wrap(tableColumns).eq(3).should("have.text", "Groshnikova");
+    });
+});
 
-    //Option 1(only when triggered)
-    cy.on('window:confirm', confirm => {
-        expect(confirm).to.equal('Are you sure you want to delete?' )
-    })
+it("Filtering the table", () => {
+  cy.contains("Tables & Data").click();
+  cy.contains("Smart Table").click();
 
-    //Option 2 
-    cy.window().then(win => {
-        cy.stub(win, 'confirm').as('dialogBox').returns(true)//false if you don't want to delete
-    })
-    cy.get('.nb-trash').first().click()
-    cy.get('@dialogBox').should('be.calledWith', 'Are you sure you want to delete?')
+  cy.get('[placeholder="Age"]').type(20);
+  cy.wait(500);
+  cy.get("tbody tr").each((tableRows) => {
+    cy.wrap(tableRows).find("td").last().should("have.text", "20");
+  });
+});
 
-})
+it.only("Filtering the table2", () => {
+  cy.contains("Tables & Data").click();
+  cy.contains("Smart Table").click();
 
-it.only('WebTables', () => {
-    cy.contains('Tables & Data').click()
-    cy.contains('Smart Table').click()
-    //option 1: by text
-    cy.get('tbody').contains('tr', 'Larry').then(tableRow => {
-        cy.wrap(tableRow).find('.nb-edit').click()
-        cy.wrap(tableRow).find('[placeholder="Age"]').clear().type('35')
-        cy.wrap(tableRow).find('.nb-checkmark').click()
-        cy.wrap(tableRow).find('td').last().should('have.text', '35')
-    })
-
-    //option 2: by index
-    cy.get('.nb-plus').click()
-    cy.get('thead tr').eq(2).then(tableRow => {
-        cy.wrap(tableRow).find('[placeholder="First Name"]').type('Karina')
-        cy.wrap(tableRow).find('[placeholder="Last Name"]').type('Groshnikova')
-        cy.wrap(tableRow).find('[placeholder="Username"]').type('@groshni')
-        cy.wrap(tableRow).find('[placeholder="E-mail"]').type('test@gmail.com')
-        cy.wrap(tableRow).find('[placeholder="Age"]').type('28')
-        cy.wrap(tableRow).find('.nb-checkmark').click()
-    })
-    cy.get('tbody tr').first().find('td').then(tableColumns => {
-        cy.wrap(tableColumns).eq(2).should('have.text', 'Karina')
-        cy.wrap(tableColumns).eq(3).should('have.text', 'Groshnikova')
-    })
-})
+  const ages = [20, 30, 40, 200];
+  cy.wrap(ages).each((age) => {
+    cy.get('[placeholder="Age"]').clear().type(age);
+    cy.wait(500);
+    cy.get("tbody tr").each((tableRows) => {
+      if (age == 200) {
+        cy.wrap(tableRows).should("contain.text", "No data found");
+      } else {
+        cy.wrap(tableRows).find("td").last().should("have.text", age);
+      }
+    });
+  });
+});

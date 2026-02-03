@@ -5,7 +5,8 @@ import {onFormLayoutsPage} from "../page-objects/formLayoutsPage"
 import {onDatePickerPage} from "../page-objects/datePickerPage"
 
 beforeEach("Open application", () => {
-  cy.visit("/");
+  //cy.visit("/");
+  cy.openHomePage();
 });
 
 it("navigation test", () => {

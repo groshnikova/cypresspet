@@ -1,8 +1,17 @@
+/// <reference types="cypress" />
 
-beforeEach('Open application', () => {
-    cy.visit('/')
-})
+import { navigateTo } from "../page-objects/navigationPage";
 
-it('navigation test', () => {
-    
-})
+beforeEach("Open application", () => {
+  cy.visit("/");
+});
+
+it.only("navigation test", () => {
+  navigateTo.formLayoutsPage();
+
+  navigateTo.datePickerPage();
+
+  navigateTo.toastrPage();
+
+  navigateTo.toolTipPage();
+});

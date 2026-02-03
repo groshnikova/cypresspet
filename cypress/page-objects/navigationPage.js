@@ -1,20 +1,30 @@
+function selectGroupMenuItem(groupItemName) {
+  cy.contains("a", groupItemName)
+    .invoke("attr", "aria-expanded")
+    .then((attr) => {
+      if (attr.includes("false")) {
+        cy.contains("a", groupItemName).click();
+      }
+    });
+}
+
 class NavigationPage {
   formLayoutsPage() {
-    cy.contains("Forms").click();
+    selectGroupMenuItem("Forms");
     cy.contains("Form Layouts").click();
   }
   datePickerPage() {
-    cy.contains("Forms").click();
+    selectGroupMenuItem("Forms");
     cy.contains("Datepicker").click();
   }
 
   toastrPage() {
-    cy.contains("Modal & Overlays").click();
+    selectGroupMenuItem("Modal & Overlays");
     cy.contains("Toastr").click();
   }
 
   toolTipPage() {
-    cy.contains("Modal & Overlays").click();
+    selectGroupMenuItem("Modal & Overlays");
     cy.contains("Tooltip").click();
   }
 }

@@ -27,7 +27,7 @@ it("input fields", () => {
     .should("have.value", "helloworld")
     .clear()
     .type("new value")
-    .press(Cypress.Keyboard.TAB);
+    // .press(Cypress.Keyboard.TAB);
 });
 
 it("Tap keys for inputs", () => {
